@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -9,45 +9,34 @@ export default function LoginSignup() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const loggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
-    if (loggedIn) {
-      return navigate("/");
-    }
-  }, [navigate]);
-
   const toggleForm = () => {
     setIsSignup(!isSignup);
+    setMessage("");
     setEmail("");
     setPassword("");
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    handleLogSign();
-  };
-
-  const handleLogSign = async () => {
     try {
       const url = isSignup
         ? "http://localhost:3003/api/user/signup"
         : "http://localhost:3003/api/user/login";
 
       const response = await axios.post(url, { email, password });
-
       setMessage(response.data.message);
 
       if (!isSignup) {
-        // On successful login
         localStorage.setItem("isLoggedIn", JSON.stringify(true));
-        navigate("/");
+        localStorage.setItem("email", JSON.stringify(email));
+        navigate("/profile");
       } else {
+        setMessage("Signup successful! Please log in.");
         setIsSignup(false);
-        navigate("/login");
       }
     } catch (error) {
       setMessage(
-        error.response?.data ||
+        error.response?.data.message ||
           `${isSignup ? "Signup" : "Login"} failed. Please try again.`
       );
     }
@@ -59,32 +48,11 @@ export default function LoginSignup() {
         <div className="m-auto md:w-8/12 lg:w-6/12 xl:w-6/12">
           <div className="rounded-xl bg-white shadow-xl">
             <div className="p-6 sm:p-16">
-              <div className="space-y-4">
-                <h2 className="font-bold text-2xl">RR-CODER</h2>
-                <h2 className="mb-8 text-2xl text-customGray font-bold">
-                  {isSignup ? "Create your account" : "Log in to your account"}
-                </h2>
-              </div>
-
+              <h2 className="font-bold text-2xl">RR-CODER</h2>
+              <h2 className="mb-8 text-2xl font-bold">
+                {isSignup ? "Create your account" : "Log in to your account"}
+              </h2>
               <p>{message}</p>
-
-              <div className="mt-8">
-                <button className="group h-12 w-full px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
-                  <div className="relative flex items-center space-x-4 justify-center">
-                    <img
-                      src="https://logos-world.net/wp-content/uploads/2020/09/Google-Symbol.png"
-                      className="absolute left-0 w-10"
-                      alt="Google logo"
-                    />
-                    <span className="block font-semibold text-gray-700">
-                      Continue with Google
-                    </span>
-                  </div>
-                </button>
-              </div>
-
-              <p className="text-center my-4">OR</p>
-
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700">
@@ -117,44 +85,13 @@ export default function LoginSignup() {
                   {isSignup ? "Sign Up" : "Log In"}
                 </button>
               </form>
-
               <div className="mt-4 text-center">
-                <p className="text-sm text-gray-600">
-                  {isSignup
-                    ? "Already have an account?"
-                    : "Don't have an account?"}{" "}
-                  <button
-                    onClick={toggleForm}
-                    className="text-blue-600 underline"
-                  >
-                    {isSignup ? "Log In" : "Sign Up"}
-                  </button>
-                </p>
-              </div>
-
-              <div className="mt-10 space-y-4 text-gray-600 text-center sm:-mb-8">
-                <p className="text-xs">
-                  By proceeding, you agree to our{" "}
-                  <a href="#" className="underline">
-                    Terms of Use
-                  </a>{" "}
-                  and confirm you have read our{" "}
-                  <a href="#" className="underline">
-                    Privacy and Cookie Statement
-                  </a>
-                  .
-                </p>
-                <p className="text-xs">
-                  This site is protected by reCAPTCHA and the{" "}
-                  <a href="#" className="underline">
-                    Google Privacy Policy
-                  </a>{" "}
-                  and{" "}
-                  <a href="#" className="underline">
-                    Terms of Service
-                  </a>{" "}
-                  apply.
-                </p>
+                <button
+                  onClick={toggleForm}
+                  className="text-blue-600 underline"
+                >
+                  {isSignup ? "Log In" : "Sign Up"}
+                </button>
               </div>
             </div>
           </div>

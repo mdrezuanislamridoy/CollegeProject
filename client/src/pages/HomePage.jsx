@@ -3,10 +3,21 @@ import { Route, Routes } from "react-router-dom";
 import axios from "axios";
 import backgroundImage from "../assets/background.jpeg";
 import PersonProfile from "../assets/person.webp";
+import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
+
+  const navigate = useNavigate();
+
+  const loggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
+
+  useEffect(() => {
+    if (!loggedIn) {
+      navigate("/signlog");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -102,7 +113,7 @@ export default function HomePage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {users.slice(0, 3).map((user) => (
                       <div
-                        key={user}
+                        key={user._id}
                         className="bg-white p-4 shadow-md rounded text-center"
                       >
                         <div className="w-20 h-20 bg-gray-300 rounded-full mx-auto mb-4 flex justify-center items-center">

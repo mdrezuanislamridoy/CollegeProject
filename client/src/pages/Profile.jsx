@@ -7,24 +7,26 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const loggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
+    const email = JSON.parse(localStorage.getItem("email"));
+
     if (!loggedIn) {
-      navigate("/signlog");
+      navigate("/signlog", { replace: true });
     } else {
       setUser({
-        name: "John Doe",
-        email: "john.doe@example.com",
-        profilePic: "https://via.placeholder.com/150", // Replace with actual URL
+        email,
+        profilePic: "https://via.placeholder.com/150",
       });
     }
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
-    navigate("/signlog");
+    localStorage.removeItem("email");
+    navigate("/signlog", { replace: true });
   };
 
   if (!user) {
-    return <p>Loading...</p>; // Add a loading state if the user data is being fetched
+    return <p>Loading...</p>;
   }
 
   return (
@@ -35,7 +37,6 @@ export default function ProfilePage() {
           alt="Profile"
           className="w-32 h-32 rounded-full mx-auto"
         />
-        <h2 className="text-2xl font-semibold mt-4">{user.name}</h2>
         <p className="text-gray-600">{user.email}</p>
       </div>
       <div className="mt-6 text-center">
