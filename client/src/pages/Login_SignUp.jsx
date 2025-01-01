@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { linkServer } from "../Serverlink";
 
 export default function LoginSignup() {
   const [isSignup, setIsSignup] = useState(false);
@@ -20,8 +21,8 @@ export default function LoginSignup() {
     e.preventDefault();
     try {
       const url = isSignup
-        ? "http://localhost:3003/api/user/signup"
-        : "http://localhost:3003/api/user/login";
+        ? `${linkServer}/api/user/signup`
+        : `${linkServer}/api/user/login`;
 
       const response = await axios.post(url, { email, password });
       setMessage(response.data.message);
