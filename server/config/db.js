@@ -3,7 +3,10 @@ require("dotenv").config();
 
 const Database = () => {
   mongoose
-    .connect(process.env.DB_URL)
+    .connect(
+      process.env.DB_URL ||
+        "mongodb+srv://mdrezuanislamridoy:RRRidoy781@rrcluster.dzwno.mongodb.net/"
+    )
     .then(() => {
       console.log("db connected");
     })
